@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>30x30</title>
+    <script src="./js/initRem.js"></script>
+    <!--<script src="https://res.wx.qq.com/mmbizwap/zh_CN/htmledition/js/vconsole/2.5.2/vconsole.min.js"></script>-->
+    <link rel="stylesheet" href="./style/reset.css">
+    <link rel="stylesheet" href="./style/index.css">
+</head>
+<body>
+<section class="movie-info line-1px-bottom">
+    <h4 class="text-header">电影名</h4>
+    <p class="gray">电影放映时间 种类</p>
+    <p class="gray">其他帮助信息</p>
+</section>
+<ul class="legend line-1px-bottom">
+    <li class="legend-item">
+        <i class="icon icon-seat-select"></i><span>已选</span>
+    </li>
+    <li class="legend-item">
+        <i class="icon icon-seat"></i><span>可选</span>
+    </li>
+    <li class="legend-item">
+        <i class="icon icon-seat-no"></i><span>已售</span>
+    </li>
+    <div id="eagle-eye-wrapper" class="eagle-eye-wrapper"></div>
+</ul>
+<section id="movie-select" class="movie-select">
+    <div id="view-box-wrapper" class="view-box-wrapper">
+        <div id="view-box" class="view-box"></div>
+    </div>
+</section>
+<section id="buy-wrapper" class="movie-buy line-1px-top hide">
+    <ul class="ticket-list">
+        <li class="ticket-item inline">
+            <div class="inline">
+                <p>10排10座</p>
+                <p class="price">50元</p>
+            </div>
+            <div class="inline" style="margin-left: 0.4rem;">
+                <i class="icon icon-close"></i>
+            </div>
+        </li>
+        <li class="ticket-item inline">
+            <div class="inline">
+                <p>10排10座</p>
+                <p class="price">100元</p>
+            </div>
+            <div class="inline" style="margin-left: 0.4rem;">
+                <i class="icon icon-close"></i>
+            </div>
+        </li>
+        <li class="ticket-item inline">
+            <div class="inline">
+                <p>10排10座</p>
+                <p class="price">1元</p>
+            </div>
+            <div class="inline" style="margin-left: 0.4rem;">
+                <i class="icon icon-close"></i>
+            </div>
+        </li>
+        <li class="ticket-item inline">
+            <div class="inline">
+                <p>10排10座</p>
+                <p class="price">23.4元</p>
+            </div>
+            <div class="inline" style="margin-left: 0.4rem;">
+                <i class="icon icon-close"></i>
+            </div>
+        </li>
+        <li class="ticket-item inline">
+            <div class="inline">
+                <p>10排10座</p>
+                <p class="price">10.08元</p>
+            </div>
+            <div class="inline" style="margin-left: 0.4rem;">
+                <i class="icon icon-close"></i>
+            </div>
+        </li>
+    </ul>
+    <button class="btn-primary">确认选座</button>
+</section>
+</body>
+<script src="./js/dom.js"></script>
+<script src="./js/app.js"></script>
+<script src="./js/index.js"></script>
+</html>
