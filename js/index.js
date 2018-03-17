@@ -9,6 +9,8 @@ window.onload = function () {
     var eagleEyeWrapper = utils.getEleById('eagle-eye-wrapper');
     var eagleEye = undefined;
     var eagleView = undefined;
+    var showEagleTimer = 0;
+    var isShowEagle = false;
     var seatWrapper = undefined;
     var colIdxWrapper = undefined;
     var rowIdxWrapper = undefined;
@@ -19,6 +21,9 @@ window.onload = function () {
     var offset = {x: 0, y: 0};
     var scale = 1;
     var eagleScale = 1;
+    var distance = {};
+    var origin = {};
+    var isCanScale = false;
 
     function init () {
         // 生成项目结构
@@ -43,7 +48,7 @@ window.onload = function () {
 
 
         // dom 生成完毕后，将视口移到正中间
-        // moveCenter(viewBox);
+        moveCenter(viewBox);
         // 组织自带的滚动事件
         viewBox.addEventListener('touchmove', onViewTouchMove);
         // 手指划改变偏移事件
@@ -81,16 +86,23 @@ window.onload = function () {
             // 一个手指的滑动效果
             startPoint.x = event.touches[0].screenX
             startPoint.y = event.touches[0].screenY
-        } else if (event.touches.length > 1) {
-            // 两个手指的滚动效果
-
+        } else if (event.touches.length === 2) {
+            // 两个手指的缩放效果
+            isCanScale = true;
+            distance.start = getDistance({
+                x: event.touches[0].screenX,
+                y: event.touches[0].screenY
+            }, {
+                x: event.touches[1].screenX,
+                y: event.touches[1].screenY
+            });
         }
     }
 
     function onViewTouchMove (event) {
         event.preventDefault();
         if (event.touches.length === 1) {
-            // 一个手指的缩放效果
+            // 一个手指的滑动效果
             endPoint.x = event.touches[0].screenX;
             endPoint.y = event.touches[0].screenY;
 
@@ -100,13 +112,42 @@ window.onload = function () {
             startPoint.x = endPoint.x;
             startPoint.y = endPoint.y;
 
+            isShowEagle = true;
             translate(viewBox.firstChild, offset.x, offset.y);
-        } else if (event.touches.length > 1) {
+        } else if (event.touches.length === 2) {
             // 两个手指的缩放效果
+            if (isCanScale) {
+                origin = getOrigin({
+                    x: event.touches[0].pageX,
+                    y: event.touches[0].pageY
+                }, {
+                    x: event.touches[1].pageX,
+                    y: event.touches[1].pageY
+                });
+                distance.stop = getDistance({
+                    x: event.touches[0].screenX,
+                    y: event.touches[0].screenY
+                }, {
+                    x: event.touches[1].screenX,
+                    y: event.touches[1].screenY
+                });
+                if (distance.stop / distance.start < 1.5) {
+                    scale = 1;
+                } else {
+                    scale = 2;
+                }
+                translate(viewBox.firstChild, offset.x, offset.y, true);
+            }
+
         }
     }
 
     function onViewTOuchEnd (event) {
+        if (scale < 1.5) {
+            scale = 1;
+        } else {
+            scale = 2;
+        }
         checkBack();
     }
 
@@ -142,13 +183,27 @@ window.onload = function () {
         } else {
             transition_animation = 'none';
         }
+
+        if (isShowEagle) {
+            eagleEyeWrapper.style.opacity = 1;
+            eagleEyeWrapper.style.zIndex = 10;
+            if (showEagleTimer) {
+                clearTimeout(showEagleTimer);
+            }
+            showEagleTimer = setTimeout(function () {
+                eagleEyeWrapper.style.opacity = 0;
+                eagleEyeWrapper.style.zIndex = -1;
+            }, 1200);
+        }
+
         el.style[vendors.TRANSITION] = transition_animation;
         colIdxWrapper.style[vendors.TRANSITION] = transition_animation;
         rowIdxWrapper.style[vendors.TRANSITION] = transition_animation;
         eagleView.style[vendors.TRANSITION] = transition_animation;
+        eagleEye.style[vendors.TRANSITION] = transition_animation;
 
         el.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-        eagleView.style.transform = `translate(${-x}px, ${-y}px)`;
+        eagleView.style.transform = `translate(${-x / scale}px, ${-y / scale}px) scale(${1 / scale})`;
         colIdxWrapper.style.transform = `translate(${x}px, 0px) scaleX(${scale})`;
         rowIdxWrapper.style.transform = `translate(0px, ${y}px) scaleY(${scale})`;
     }
@@ -161,11 +216,12 @@ window.onload = function () {
         var cHeight = firstChild.clientHeight;
         offset.x = -cWidth / 2 + width / 2;
         offset.y = -cHeight / 2 + height / 2;
+        isShowEagle = false;
         translate(firstChild, offset.x, offset.y);
     }
 
     function checkBack () {
-        var locationCheck = false
+        var locationCheck = false;
         var width = viewBox.clientWidth;
         var height = viewBox.clientHeight;
         var firstChild = viewBox.firstChild;
@@ -189,6 +245,7 @@ window.onload = function () {
             locationCheck = true;
         }
         if (locationCheck) {
+            isShowEagle = true;
             translate(viewBox.firstChild, offset.x, offset.y, true);
         }
     }
@@ -232,6 +289,7 @@ window.onload = function () {
         if (offset.x < (width - cWidth - 20)) {
             offset.x = (width - cWidth - 20);
         }
+        isShowEagle = true;
         translate(seatWrapper, offset.x, offset.y, true)
         // scaleView(seatWrapper, 1, event.clientX, event.clientY);
     }
@@ -258,10 +316,21 @@ window.onload = function () {
         eagleEye.style.height = `${eagleHeight}px`;
         eagleEye.style.transform = `scale(${eagleScale})`;
 
-        eagleView.style.width = `${viewWidth * eagleScale}px`;
-        eagleView.style.height = `${viewHeight * eagleScale}px`;
+        eagleView.style.width = `${viewWidth}px`;
+        eagleView.style.height = `${viewHeight}px`;
 
 
+    }
+
+    function getDistance (start, stop) {
+        return Math.sqrt(Math.pow((stop.x - start.x), 2) + Math.pow((stop.y - start.y), 2));
+    }
+
+    function getOrigin (first, second) {
+        return {
+            x: (first.x + second.x) / 2,
+            y: (first.y + second.y) / 2
+        };
     }
 
     init();

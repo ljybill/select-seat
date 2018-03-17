@@ -307,14 +307,15 @@ p {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: -1;
     width: 0;
     height: 0;
-    -webkit-transition: opacity .4s;
-    -moz-transition: opacity .4s;
-    -ms-transition: opacity .4s;
-    -o-transition: opacity .4s;
-    transition: opacity .4s;
+    -webkit-transition: all .4s ease-out;
+    -moz-transition: all .4s ease-out;
+    -ms-transition: all .4s ease-out;
+    -o-transition: all .4s ease-out;
+    transition: all .4s ease-out;
+    opacity: 0;
 }
 
 .eagle-eye {
@@ -328,7 +329,7 @@ p {
 
 .eagle-view {
     border: 4px solid crimson;
-    transform-origin: right bottom;
+    transform-origin: 0 0;
     display: block;
     box-sizing: border-box;
 }
